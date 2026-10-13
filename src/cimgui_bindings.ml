@@ -289,30 +289,12 @@ module Bindings (F : Ctypes.FOREIGN) = struct
   let text_unformatted =
     foreign "igTextUnformatted" (string @-> string @-> returning void)
   let text = foreign "igText" (string @-> returning void)
-  let text_v =
-    foreign "igTextV" (string @-> (lift_typ va_list_t) @-> returning void)
   let text_colored =
     foreign "igTextColored" ((lift_typ Vec4.t) @-> string @-> returning void)
-  let text_colored_v =
-    foreign "igTextColoredV"
-      ((lift_typ Vec4.t) @-> string @-> (lift_typ va_list_t)
-        @-> returning void)
   let text_disabled = foreign "igTextDisabled" (string @-> returning void)
-  let text_disabled_v =
-    foreign "igTextDisabledV"
-      (string @-> (lift_typ va_list_t) @-> returning void)
   let text_wrapped = foreign "igTextWrapped" (string @-> returning void)
-  let text_wrapped_v =
-    foreign "igTextWrappedV"
-      (string @-> (lift_typ va_list_t) @-> returning void)
   let label_text = foreign "igLabelText" (string @-> string @-> returning void)
-  let label_text_v =
-    foreign "igLabelTextV"
-      (string @-> string @-> (lift_typ va_list_t) @-> returning void)
   let bullet_text = foreign "igBulletText" (string @-> returning void)
-  let bullet_text_v =
-    foreign "igBulletTextV"
-      (string @-> (lift_typ va_list_t) @-> returning void)
   let separator_text = foreign "igSeparatorText" (string @-> returning void)
   let button =
     foreign "igButton" (string @-> (lift_typ Vec2.t) @-> returning bool)
@@ -563,12 +545,6 @@ module Bindings (F : Ctypes.FOREIGN) = struct
     foreign "igTreeNode_StrStr" (string @-> string @-> returning bool)
   let tree_node_ptr =
     foreign "igTreeNode_Ptr" ((ptr void) @-> string @-> returning bool)
-  let tree_node_v_str =
-    foreign "igTreeNodeV_Str"
-      (string @-> string @-> (lift_typ va_list_t) @-> returning bool)
-  let tree_node_v_ptr =
-    foreign "igTreeNodeV_Ptr"
-      ((ptr void) @-> string @-> (lift_typ va_list_t) @-> returning bool)
   let tree_node_ex_str =
     foreign "igTreeNodeEx_Str"
       (string @-> (lift_typ tree_node_flags_t) @-> returning bool)
@@ -579,14 +555,6 @@ module Bindings (F : Ctypes.FOREIGN) = struct
     foreign "igTreeNodeEx_Ptr"
       ((ptr void) @-> (lift_typ tree_node_flags_t) @-> string
         @-> returning bool)
-  let tree_node_ex_v_str =
-    foreign "igTreeNodeExV_Str"
-      (string @-> (lift_typ tree_node_flags_t) @-> string @->
-        (lift_typ va_list_t) @-> returning bool)
-  let tree_node_ex_v_ptr =
-    foreign "igTreeNodeExV_Ptr"
-      ((ptr void) @-> (lift_typ tree_node_flags_t) @-> string @->
-        (lift_typ va_list_t) @-> returning bool)
   let tree_push_str = foreign "igTreePush_Str" (string @-> returning void)
   let tree_push_ptr = foreign "igTreePush_Ptr" ((ptr void) @-> returning void)
   let tree_pop = foreign "igTreePop" (void @-> returning void)
@@ -659,15 +627,9 @@ module Bindings (F : Ctypes.FOREIGN) = struct
   let begin_tooltip = foreign "igBeginTooltip" (void @-> returning bool)
   let end_tooltip = foreign "igEndTooltip" (void @-> returning void)
   let set_tooltip = foreign "igSetTooltip" (string @-> returning void)
-  let set_tooltip_v =
-    foreign "igSetTooltipV"
-      (string @-> (lift_typ va_list_t) @-> returning void)
   let begin_item_tooltip =
     foreign "igBeginItemTooltip" (void @-> returning bool)
   let set_item_tooltip = foreign "igSetItemTooltip" (string @-> returning void)
-  let set_item_tooltip_v =
-    foreign "igSetItemTooltipV"
-      (string @-> (lift_typ va_list_t) @-> returning void)
   let begin_popup =
     foreign "igBeginPopup"
       (string @-> (lift_typ window_flags_t) @-> returning bool)
@@ -786,8 +748,6 @@ module Bindings (F : Ctypes.FOREIGN) = struct
   let log_to_clipboard = foreign "igLogToClipboard" (int @-> returning void)
   let log_finish = foreign "igLogFinish" (void @-> returning void)
   let log_buttons = foreign "igLogButtons" (void @-> returning void)
-  let log_text_v =
-    foreign "igLogTextV" (string @-> (lift_typ va_list_t) @-> returning void)
   let begin_drag_drop_source =
     foreign "igBeginDragDropSource"
       ((lift_typ drag_drop_flags_t) @-> returning bool)
@@ -1235,10 +1195,6 @@ module Bindings (F : Ctypes.FOREIGN) = struct
     let append =
       foreign "ImGuiTextBuffer_append"
         ((ptr (lift_typ TextBuffer.t)) @-> string @-> string
-          @-> returning void)
-    let appendfv =
-      foreign "ImGuiTextBuffer_appendfv"
-        ((ptr (lift_typ TextBuffer.t)) @-> string @-> (lift_typ va_list_t)
           @-> returning void)
   end
   
@@ -2055,17 +2011,9 @@ module Bindings (F : Ctypes.FOREIGN) = struct
   let im_format_string =
     foreign "igImFormatString"
       (string @-> (lift_typ int_as_size_t) @-> string @-> returning int)
-  let im_format_string_v =
-    foreign "igImFormatStringV"
-      (string @-> (lift_typ int_as_size_t) @-> string @-> (lift_typ va_list_t)
-        @-> returning int)
   let im_format_string_to_temp_buffer =
     foreign "igImFormatStringToTempBuffer"
       ((ptr string) @-> (ptr string) @-> string @-> returning void)
-  let im_format_string_to_temp_buffer_v =
-    foreign "igImFormatStringToTempBufferV"
-      ((ptr string) @-> (ptr string) @-> string @-> (lift_typ va_list_t)
-        @-> returning void)
   let im_parse_format_find_start =
     foreign "igImParseFormatFindStart" (string @-> returning string)
   let im_parse_format_find_end =
@@ -4230,8 +4178,6 @@ module Bindings (F : Ctypes.FOREIGN) = struct
     foreign "igGcAwakeTransientWindowBuffers"
       ((ptr (lift_typ Window.t)) @-> returning void)
   let debug_log = foreign "igDebugLog" (string @-> returning void)
-  let debug_log_v =
-    foreign "igDebugLogV" (string @-> (lift_typ va_list_t) @-> returning void)
   let debug_alloc_hook =
     foreign "igDebugAllocHook"
       ((ptr (lift_typ DebugAllocInfo.t)) @-> int @-> (ptr void) @->

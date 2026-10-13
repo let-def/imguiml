@@ -948,10 +948,20 @@ let pp_fun_name curr_mod fmt vname =
       in
       Format.fprintf fmt "%s" name
 
+(* va_list is ABI-specific (a pointer on x86-64, a struct on arm64) and cannot
+   be built from OCaml anyway, so functions taking one are not bound. *)
+let takes_va_list = function
+  | TFun (_, args, _, _) ->
+      List.exists
+        (fun (_, typ, _) ->
+          match unrollType typ with TBuiltin_va_list _ -> true | _ -> false)
+        (argsToList args)
+  | _ -> false
+
 let pp_fun_binding fmt var =
   match var with
   | { vname; vtype = TFun _ as vtype; _ }
-    when vname <> "ImGuiTextBuffer_appendf" ->
+    when vname <> "ImGuiTextBuffer_appendf" && not (takes_va_list vtype) ->
       let module_ = get_module_name_opt vname in
       Format.fprintf fmt "%a@[<hov 2>let@ %a@ =@ @[<hov 2>foreign@ %S@ %a@]@]"
         (fun fmt mod_name ->
