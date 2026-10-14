@@ -11,6 +11,8 @@
 #define igDebugCheckVersionAndDataLayout igDebugCheckVersionAndDataLayout_Str
 #endif
 
+#define igGetIO igGetIO_Nil
+
 int main(void)
 {
   assert(igDebugCheckVersionAndDataLayout(igGetVersion(), sizeof(ImGuiIO), sizeof(ImGuiStyle),
@@ -20,9 +22,10 @@ int main(void)
   igCreateContext(NULL);
   ImGuiIO *io = igGetIO();
 
-  unsigned char *text_pixels = NULL;
-  int text_w, text_h;
-  ImFontAtlas_GetTexDataAsRGBA32(io->Fonts, &text_pixels, &text_w, &text_h, NULL);
+  // unsigned char *text_pixels = NULL;
+  // int text_w, text_h;
+  // ImFontAtlas_GetTexDataAsRGBA32(io->Fonts, &text_pixels, &text_w, &text_h, NULL);
+  io->BackendFlags |= ImGuiBackendFlags_RendererHasTextures;
 
   for (int n = 0; n < 20; n++) {
     printf("NewFrame() %d\n", n);
@@ -31,6 +34,7 @@ int main(void)
     display_size.x = 1920;
     display_size.y = 1080;
     io->DisplaySize = display_size;
+	printf("DisplaySice %f, %f\n", io->DisplaySize.x, io->DisplaySize.y);
     io->DeltaTime = 1.0f / 60.0f;
     igNewFrame();
     

@@ -2,7 +2,7 @@
  (targets cimgui.e.c)
  (deps ../cimgui/cimgui/cimgui.h)
  (action
-  (run %{cc} -E %{deps} -o %{targets} -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1)))
+  (run %{cc} -E %{deps} -o %{targets} -std=c17 -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1)))
 
 (rule
  (deps

@@ -34,6 +34,12 @@ typedef unsigned __int64 ImU64;
 //typedef unsigned long long ImU64;
 #endif
 
+#ifndef CIMGUI_DEFINE_ENUMS_AND_STRUCTS
+#ifdef IMGUI_ENABLE_FREETYPE
+#include "./imgui/misc/freetype/imgui_freetype.h"
+#endif
+#endif
+
 
 #ifdef CIMGUI_DEFINE_ENUMS_AND_STRUCTS
 #include "imgui_structs.h"
@@ -43,13 +49,16 @@ struct SDL_Window;
 typedef union SDL_Event SDL_Event;
 #endif // CIMGUI_DEFINE_ENUMS_AND_STRUCTS
 
+PLACE_STRUCTS_C
+
 #include "auto_funcs.h"
 
 /////////////////////////hand written functions
-//no LogTextV
-CIMGUI_API void igLogText(CONST char *fmt, ...);
 //no appendfV
-CIMGUI_API void ImGuiTextBuffer_appendf(struct ImGuiTextBuffer *buffer, const char *fmt, ...);
+CIMGUI_API void ImGuiTextBuffer_appendf(ImGuiTextBuffer *self, const char *fmt, ...);
+#ifdef CIMGUI_VARGS0
+CIMGUI_API void ImGuiTextBuffer_appendf0(ImGuiTextBuffer *self, const char *fmt);
+#endif
 //for getting FLT_MAX in bindings
 CIMGUI_API float igGET_FLT_MAX(void);
 //for getting FLT_MIN in bindings
@@ -61,6 +70,10 @@ CIMGUI_API void ImVector_ImWchar_destroy(ImVector_ImWchar* self);
 CIMGUI_API void ImVector_ImWchar_Init(ImVector_ImWchar* p);
 CIMGUI_API void ImVector_ImWchar_UnInit(ImVector_ImWchar* p);
 
+#ifdef IMGUI_HAS_DOCK
+CIMGUI_API void ImGuiPlatformIO_Set_Platform_GetWindowPos(ImGuiPlatformIO* platform_io, void(*user_callback)(ImGuiViewport* vp, ImVec2* out_pos));
+CIMGUI_API void ImGuiPlatformIO_Set_Platform_GetWindowSize(ImGuiPlatformIO* platform_io, void(*user_callback)(ImGuiViewport* vp, ImVec2* out_size));
+#endif
 
 #endif //CIMGUI_INCLUDED
 

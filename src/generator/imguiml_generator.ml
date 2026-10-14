@@ -585,13 +585,13 @@ let pp_enum fmt { ename; eitems; _ } =
      end@\n"
     enum_module_name
     (fun fmt ->
-      List.iter (fun (name, _, _) ->
+      List.iter (fun (name, _, _, _) ->
           let name = mangle_enum_variant ename_regexp name in
           Format.fprintf fmt "@[<hov>|@ %s@]@\n"
             (Str.global_replace ename_regexp "" name)))
     eitems
     (fun fmt ->
-      List.iter (fun (name, _, _) ->
+      List.iter (fun (name, _, _, _) ->
           let variant_name = mangle_enum_variant ename_regexp name in
           let val_name = camlCase_to_snake_case variant_name in
           let val_name =
@@ -608,7 +608,7 @@ let pp_enum fmt { ename; eitems; _ } =
     eitems ename
     (Format.pp_print_list
        ~pp_sep:(fun fmt () -> Format.fprintf fmt ";@ ")
-       (fun fmt (name, _, _) ->
+       (fun fmt (name, _, _, _) ->
          let variant_name = mangle_enum_variant ename_regexp name in
          let val_name = camlCase_to_snake_case variant_name in
          let val_name =
