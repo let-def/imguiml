@@ -426,7 +426,8 @@ module Structs (S : Ctypes.TYPE) = struct
     let sources = field t "Sources" (lift_typ vector_im_font_config_ptr_t)
     let ellipsis_char = field t "EllipsisChar" (lift_typ wchar_t)
     let fallback_char = field t "FallbackChar" (lift_typ wchar_t)
-    let used8k_pages_map = field t "Used8kPagesMap" (array (1) (lift_typ u8_t))
+    let used8k_pages_map =
+      field t "Used8kPagesMap" (array (17) (lift_typ u8_t))
     let ellipsis_auto_bake = field t "EllipsisAutoBake" bool
     let remap_pairs = field t "RemapPairs" (lift_typ storage_t)
     let () = seal t

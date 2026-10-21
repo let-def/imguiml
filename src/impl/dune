@@ -87,7 +87,7 @@
   (include_dirs ../../cimgui/cimgui ../../cimgui/cimgui/generator/output)
   (flags
    :standard
-   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE))
+   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE -DIMGUI_USE_WCHAR32))
  (libraries ctypes.stubs imguiml_impl_foreign))
 
 (library

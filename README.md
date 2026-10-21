@@ -18,6 +18,12 @@ or colour glyphs. Its API is bound as `Bindings.ImGuiFreeType` and its
 flags as `Types.FreeTypeLoaderFlags`, set per font in `FontConfig`'s
 `font_loader_flags`.
 
+Characters are 32 bits wide (`IMGUI_USE_WCHAR32`), so that text beyond
+U+FFFF, such as emoji or rarer CJK, can be shown, given a font that has
+it. `imgui.h` takes this from the `imconfig.h` it comes with; C code that
+includes `cimgui.h` must define `IMGUI_USE_WCHAR32` itself, or its
+`ImWchar` will not be ImGui's.
+
 See [CHANGELOG.md](CHANGELOG.md) for what changed from 1.90.6.
 
 ## Libraries
@@ -55,8 +61,9 @@ directory, both without their git history. To move to another version:
 2. Regenerate cimgui's bindings, from `cimgui/cimgui/generator`:
    `./generator.sh` (it needs LuaJIT and gcc). Leave out what it leaves
    behind there: `itemsarr.lua`, `preprocesed.h`.
-3. Keep this repository's change to `cimgui/cimgui/CMakeLists.txt`: it
-   finds FreeType with CMake's `FindFreetype` module.
+3. Keep this repository's changes to `cimgui/cimgui/CMakeLists.txt`,
+   which finds FreeType with CMake's `FindFreetype` module, and to
+   `cimgui/cimgui/imgui/imconfig.h`, which defines `IMGUI_USE_WCHAR32`.
 4. Copy ImGui's GLFW and OpenGL3 backends from `imgui/backends` to
    `src/impl/backend`.
 5. `dune build` regenerates the OCaml bindings; the binding generator

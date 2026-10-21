@@ -634,8 +634,8 @@ let wchar32_t : wchar32_t typ = typedef int_as_uint "ImWchar32"
 type wchar16_t = int
 let wchar16_t : wchar16_t typ = typedef int_as_ushort "ImWchar16"
 
-type wchar_t = wchar16_t
-let wchar_t : wchar_t typ = typedef wchar16_t "ImWchar"
+type wchar_t = wchar32_t
+let wchar_t : wchar_t typ = typedef wchar32_t "ImWchar"
 
 type selection_user_data_t = s64_t
 let selection_user_data_t : selection_user_data_t typ =

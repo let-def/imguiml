@@ -40,6 +40,14 @@
   `FindFreetype` module, which needs no package configuration from the
   distribution.
 
+### Unicode beyond U+FFFF
+
+- `ImWchar` is 32 bits wide (`IMGUI_USE_WCHAR32`, defined in ImGui's
+  `imconfig.h` and for the bindings): characters beyond U+FFFF, such as
+  emoji, are no longer replaced by U+FFFD. Glyph ranges and the
+  characters queued in `Io` are arrays of 32-bit values. C code that
+  includes `cimgui.h` must define `IMGUI_USE_WCHAR32`.
+
 ### Build
 
 - Builds on all architectures, arm64 included.

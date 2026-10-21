@@ -16,6 +16,9 @@ let () =
   io |-> Types.Io.backend_flags
   <-@ (!@(io |-> Types.Io.backend_flags)
       lor Int64.to_int Types.BackendFlags.renderer_has_textures);
+  (* A character beyond U+FFFF, as an emoji, comes back whole from the first
+     frame: ImWchar is 32 bits wide, on the C side as in the bindings. *)
+  Bindings.ImGuiIO.add_input_character io 0x1F600;
   for n = 0 to 20 do
     Format.printf "New frame: %d@\n" n;
     let display_size = make Types.Vec2.t in
@@ -24,6 +27,11 @@ let () =
     io |-> Types.Io.display_size <-@ display_size;
     io |-> Types.Io.delta_time <-@ 1. /. 60.;
     Bindings.new_frame ();
+    if n = 0 then begin
+      let queue = io |-> Types.Io.input_queue_characters in
+      Format.printf "ImWchar: %d bytes; queued: U+%X@\n" (sizeof Types.wchar_t)
+        !@(!@(queue |-> Types.Vector_ImWchar.data))
+    end;
     let _ =
       Bindings.begin_ "Main window" (null bool)
         (Int64.to_int Types.WindowFlags.no_title_bar)
