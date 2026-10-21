@@ -39,6 +39,12 @@ let () =
     Bindings.show_demo_window (null bool);
     Bindings.render ()
   done;
+  (* Its name, without the version of FreeType. *)
+  Format.printf "Font loader: %s@\n"
+    (List.hd
+       (String.split_on_char ' '
+          !@(!@(io |-> Types.Io.fonts) |-> Types.FontAtlas.font_loader_name)));
+  Format.printf "FreeType's bold: %Ld@\n" Types.FreeTypeLoaderFlags.bold;
   Format.printf "%u@\n" (Int64.to_int Types.WindowFlags.no_title_bar);
   Format.printf "size: %d@\n" (sizeof Types.WindowFlags.t);
   Format.printf "DestroyContext()@\n";

@@ -5070,6 +5070,23 @@ module Bindings (F : Ctypes.FOREIGN) = struct
         ((ptr (lift_typ FontAtlasBuilder.t)) @-> returning void)
   end
   
+  module ImGuiFreeType = struct
+    let get_font_loader =
+      foreign "ImGuiFreeType_GetFontLoader"
+        (void @-> returning (ptr (lift_typ FontLoader.t)))
+    let set_allocator_functions =
+      foreign "ImGuiFreeType_SetAllocatorFunctions"
+        ((Foreign.funptr
+           Ctypes.((int_as_size_t @-> (ptr void) @-> returning (ptr void))))
+          @->
+          (Foreign.funptr
+            Ctypes.(((ptr void) @-> (ptr void) @-> returning void))) @->
+          (ptr void) @-> returning void)
+    let debug_edit_font_loader_flags =
+      foreign "ImGuiFreeType_DebugEditFontLoaderFlags"
+        ((ptr (lift_typ free_type_loader_flags_t)) @-> returning bool)
+  end
+  
   module ImVector = struct
     let im_wchar_create =
       foreign "ImVector_ImWchar_create"

@@ -4107,5 +4107,45 @@ module Enums (S : Ctypes.TYPE) = struct
          (Unsorted, unsorted)]
      
   end
+  module FreeTypeLoaderFlags = struct
+    type t =
+    | NoHinting
+    | NoAutoHint
+    | ForceAutoHint
+    | LightHinting
+    | MonoHinting
+    | Bold
+    | Oblique
+    | Monochrome
+    | LoadColor
+    | Bitmap
+    
+    let no_hinting = constant "ImGuiFreeTypeLoaderFlags_NoHinting" int64_t
+    let no_auto_hint = constant "ImGuiFreeTypeLoaderFlags_NoAutoHint" int64_t
+    let force_auto_hint =
+      constant "ImGuiFreeTypeLoaderFlags_ForceAutoHint" int64_t
+    let light_hinting =
+      constant "ImGuiFreeTypeLoaderFlags_LightHinting" int64_t
+    let mono_hinting = constant "ImGuiFreeTypeLoaderFlags_MonoHinting" int64_t
+    let bold = constant "ImGuiFreeTypeLoaderFlags_Bold" int64_t
+    let oblique = constant "ImGuiFreeTypeLoaderFlags_Oblique" int64_t
+    let monochrome = constant "ImGuiFreeTypeLoaderFlags_Monochrome" int64_t
+    let load_color = constant "ImGuiFreeTypeLoaderFlags_LoadColor" int64_t
+    let bitmap = constant "ImGuiFreeTypeLoaderFlags_Bitmap" int64_t
+    
+    let t : t typ =
+      enum "ImGuiFreeTypeLoaderFlags_" ~typedef:true
+        [(NoHinting, no_hinting);
+         (NoAutoHint, no_auto_hint);
+         (ForceAutoHint, force_auto_hint);
+         (LightHinting, light_hinting);
+         (MonoHinting, mono_hinting);
+         (Bold, bold);
+         (Oblique, oblique);
+         (Monochrome, monochrome);
+         (LoadColor, load_color);
+         (Bitmap, bitmap)]
+     
+  end
   
 end

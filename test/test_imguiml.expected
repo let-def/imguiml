@@ -20,6 +20,8 @@ New frame: 17
 New frame: 18
 New frame: 19
 New frame: 20
+Font loader: FreeType
+FreeType's bold: 32
 1
 size: 4
 DestroyContext()

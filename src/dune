@@ -2,7 +2,7 @@
  (targets cimgui.e.c)
  (deps ../cimgui/cimgui/cimgui.h)
  (action
-  (run %{cc} -E %{deps} -o %{targets} -std=c17 -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1)))
+  (run %{cc} -E %{deps} -o %{targets} -std=c17 -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE)))
 
 (rule
  (deps
@@ -64,7 +64,7 @@
    %{deps}
    -o
    %{targets}
-   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1
+   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE
    -I%{ocaml_where}
    -I%{ocaml_where}/../ctypes
    -I%{env:PWD=.}/cimgui/cimgui)))
@@ -128,7 +128,7 @@
    %{deps}
    -o
    %{targets}
-   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1
+   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE
    -I%{ocaml_where}
    -I%{ocaml_where}/../ctypes
    -I%{env:PWD=.}/cimgui/cimgui)))
@@ -195,7 +195,7 @@
    %{deps}
    -o
    %{targets}
-   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1
+   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE
    -I%{ocaml_where}
    -I%{ocaml_where}/../ctypes
    -I%{env:PWD=.}/cimgui/cimgui)))
@@ -264,7 +264,7 @@
    %{deps}
    -o
    %{targets}
-   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1
+   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE
    -I%{ocaml_where}
    -I%{ocaml_where}/../ctypes
    -I%{env:PWD=.}/cimgui/cimgui)))
@@ -336,7 +336,7 @@
   (flags
    -fPIC
    -I%{env:PWD=.}/cimgui/cimgui
-   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1
+   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE
    -Wno-incompatible-pointer-types
    -Wno-discarded-qualifiers))
  (libraries ctypes.stubs))

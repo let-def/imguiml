@@ -17,12 +17,12 @@
     (chdir
      cimgui/build_static
      (progn
-      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_STATIC=yes ..)
+      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes -DIMGUI_STATIC=yes ..)
       (run make)))
     (chdir
      cimgui/build_dynamic
      (progn
-      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..)
+      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes ..)
       (run make)))
     (copy cimgui/build_dynamic/cimgui.so dllcimgui.so)
     (copy cimgui/build_static/cimgui.a libcimgui.a)))))
@@ -44,12 +44,12 @@
     (chdir
      cimgui/build_static
      (progn
-      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_STATIC=yes ..)
+      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes -DIMGUI_STATIC=yes ..)
       (run make)))
     (chdir
      cimgui/build_dynamic
      (progn
-      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..)
+      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes ..)
       (run make)))
     (copy cimgui/build_dynamic/cimgui.dylib dllcimgui.so)
     (copy cimgui/build_static/cimgui.a libcimgui.a)))))
@@ -57,7 +57,7 @@
 (library
  (name cimgui)
  (public_name imguiml.cimgui)
- (c_library_flags -lstdc++)
+ (c_library_flags -lfreetype -lstdc++)
  (public_headers
   cimgui/cimgui.h
   (glob_files cimgui/imgui/*.h))

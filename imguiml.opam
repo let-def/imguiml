@@ -24,6 +24,7 @@ depends: [
   "sherlodoc" {with-doc}
   "conf-glew"
   "conf-glfw3"
+  "conf-freetype"
 ]
 depexts: [
   ["gcc" "cmake"]

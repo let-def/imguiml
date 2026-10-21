@@ -1317,6 +1317,10 @@ type stb_textedit_row_t
 let stb_textedit_row_t : stb_textedit_row_t structure typ =
   typedef (structure "StbTexteditRow") "StbTexteditRow"
 
+type free_type_loader_flags_t = int
+let free_type_loader_flags_t : free_type_loader_flags_t typ =
+  typedef int_as_uint "ImGuiFreeTypeLoaderFlags"
+
 type texture_ref___0_t
 let texture_ref___0_t : texture_ref___0_t structure typ =
   typedef (structure "ImTextureRef_c") "ImTextureRef___0"

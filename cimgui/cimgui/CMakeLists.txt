@@ -27,8 +27,8 @@ set(IMGUI_LIBRARIES )
 
 if(IMGUI_FREETYPE)
 	message(STATUS "Building with freetype")
-	FIND_PACKAGE(freetype REQUIRED PATHS ${FREETYPE_PATH})
-	list(APPEND IMGUI_LIBRARIES freetype)
+	find_package(Freetype REQUIRED)
+	list(APPEND IMGUI_LIBRARIES Freetype::Freetype)
 	list(APPEND IMGUI_SOURCES imgui/misc/freetype/imgui_freetype.cpp)
 endif(IMGUI_FREETYPE)
 
