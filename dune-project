@@ -2,7 +2,7 @@
 (name imguiml)
 (using directory-targets 0.1)
 (generate_opam_files false)
-(version v1.90.6)
+(version v1.93.0)
 (source
  (github emilienlemaire/imguiml))
 
@@ -23,7 +23,6 @@
           goblint-cil
           ctypes
           ctypes-foreign
-          (ppx_expect :with-test)
           (sherlodoc :with-doc))
  (tags
   (graphics imgui ctypes bindings)))

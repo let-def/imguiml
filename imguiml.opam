@@ -22,7 +22,6 @@ depends: [
   "ctypes-foreign" {>= "0.21.1"}
   "odoc" {with-doc}
   "sherlodoc" {with-doc}
-  "ppx_expect" {with-test}
   "conf-glew"
   "conf-glfw3"
 ]

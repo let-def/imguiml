@@ -3,31 +3,7 @@ module Types = struct
       [_t] and every structure defined in cimgui have a module with the structure name, stripped
       of the [Im] or [ImGui] prefix.*)
 
-  include Cimgui_types
-  (** @inline *)
-
-  include Cimgui_enums.Enums (Cimgui_enums_generated)
-  (** @inline *)
-
-  include Cimgui_base_structs.Base (Cimgui_base_structs_generated)
-  (** @inline *)
-
-  module NextItemData = Cimgui_structs1.NextItemData
-  module TableColumnSortSpecs = Cimgui_structs1.TableColumnSortSpecs
-
-  include Cimgui_structs1.Structs (Cimgui_structs1_generated)
-  (** @inline *)
-
-  module FontGlyph = Cimgui_structs2.FontGlyph
-  module DockNode = Cimgui_structs2.DockNode
-  module StackLevelInfo = Cimgui_structs2.StackLevelInfo
-  module Context = Cimgui_structs2.Context
-  module Window = Cimgui_structs2.Window
-  module TableColumn = Cimgui_structs2.TableColumn
-  module Table = Cimgui_structs2.Table
-  module TableColumnSettings = Cimgui_structs2.TableColumnSettings
-
-  include Cimgui_structs2.Structs (Cimgui_structs2_generated)
+  include Cimgui_bindings.Types
   (** @inline *)
 end
 

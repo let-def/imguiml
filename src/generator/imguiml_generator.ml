@@ -42,25 +42,34 @@ let replacements =
 
 let abstract_structs = [ "DockRequest"; "DockNodeSettings" ]
 
+(* Structs with bit fields, which C cannot take the offset of: opaque, as
+   top-level modules. *)
 let has_bit_fields =
   [
+    "ImFontGlyph";
+    "ImFontBaked";
+    "ImGuiPackedDate";
+    "ImGuiStyleVarInfo";
+    "ImGuiComboPreviewData";
+    "ImGuiBoxSelectState";
     "ImGuiDockNode";
-    "ImGuiStackLevelInfo";
-    "ImGuiContext";
+    "ImGuiWindowSettings";
     "ImGuiWindow";
     "ImGuiTableColumn";
     "ImGuiTable";
     "ImGuiTableColumnSettings";
-    "ImGuiNextItemData";
-    "ImGuiTableColumnSortSpecs";
-    "ImFontGlyph";
+    "ImGuiTableSettings";
+    "ImFontAtlasRectEntry";
   ]
 
 let stages =
   [
-    ("ImVec2", 0);
-    ("ImVec4", 0);
+    ("ImVec2_c", 0);
+    ("ImVec4_c", 0);
+    ("ImVec2i_c", 0);
     ("ImVec2ih", 0);
+    ("ImRect_c", 0);
+    ("ImTextureRef_c", 0);
     ("ImVector_ImGuiWindowPtr", 1);
     ("ImGuiWindowClass", 1);
     ("ImGuiIO", 1);
@@ -84,7 +93,6 @@ let stages =
     ("ImVector_ImGuiNavTreeNodeData", 1);
     ("ImVector_ImGuiViewportPPtr", 1);
     ("ImGuiPlatformMonitor", 1);
-    ("ImRect", 1);
     ("ImGuiNavItemData", 1);
     ("ImGuiPayload", 1);
     ("ImVector_unsigned_char", 1);
@@ -126,6 +134,7 @@ let stages =
     ("ImGuiTableColumnSortSpecs", 1);
     ("ImVector_ImGuiTableColumnSortSpecs", 1);
     ("ImGuiTableSortSpecs", 1);
+    ("ImGuiDataTypeStorage", 1);
     ("ImGuiNextItemData", 1);
     ("ImBitArray_ImGuiKey_NamedKey_COUNT__lessImGuiKey_NamedKey_BEGIN", 1);
   ]
@@ -271,7 +280,16 @@ let camlCase_to_snake_case ?(remove_ = false) str =
     else str
   else str
 
+(* cimgui names the structs passed by value [ImVec2_c] and the like, and
+   [ImVec2] is the same struct: one name for both. *)
+let by_value = [ "ImVec2_c"; "ImVec4_c"; "ImVec2i_c"; "ImRect_c"; "ImColor_c"; "ImTextureRef_c" ]
+
+let unsuffixed name =
+  if List.mem name by_value then String.sub name 0 (String.length name - 2)
+  else name
+
 let mangle_name name =
+  let name = unsuffixed name in
   match name with
   | "size_t" -> "size_t"
   | "va_list" -> "va_list_t"
@@ -290,7 +308,8 @@ let mangle_name name =
           no_im replacements
       in
       let str = camlCase_to_snake_case no_im in
-      String.sub str 1 (String.length str - 1) ^ "_t"
+      (if str.[0] = '_' then String.sub str 1 (String.length str - 1) else str)
+      ^ "_t"
 
 let mangle_field_name name =
   let name =
@@ -302,9 +321,15 @@ let mangle_field_name name =
   let str =
     if str.[0] = '_' then String.sub str 1 (String.length str - 1) else str
   in
-  match str with "type" -> "type_" | _ -> str
+  match str with
+  | "type" | "begin" | "end" | "val" | "method" | "object" | "class" | "done"
+  | "to" | "of" | "open" | "include" | "module" | "new" | "private" | "virtual"
+  | "match" | "with" | "function" | "fun" | "constraint" | "external" ->
+      str ^ "_"
+  | _ -> str
 
 let mangle_struct_name name =
+  let name = unsuffixed name in
   let name =
     List.fold_left
       (fun name (reg, rep) -> Str.global_replace reg rep name)
@@ -381,7 +406,9 @@ let rec pp_ctypes_type ~in_bindings ~lift ~mod_name fmt = function
               let type_name = mangle_name (Hashtbl.find defined_funcs tfun) in
               Format.fprintf fmt "@[<hov 2>(lift_typ@ %s)@]" type_name
             else
-              Format.fprintf fmt "@[<hov 2>(Foreign.funptr@ %a)@]"
+              (* Inside the functor, [@->] is the functor's: a function
+                 pointer's type is built with Ctypes' own. *)
+              Format.fprintf fmt "@[<hov 2>(Foreign.funptr@ Ctypes.(%a))@]"
                 (pp_ctypes_type ~in_bindings ~lift:false ~mod_name)
                 typ
           else
@@ -676,6 +703,17 @@ let pp_struct fmt cname fields =
     module_name type_name cname pp_fields fields;
   defined := StrMap.add cname !stage !defined
 
+let pp_opaque_struct fmt cname =
+  let module_name = mangle_struct_name cname in
+  Format.fprintf fmt
+    "@[<hov 2>@[<hov>module@ %s@ =@ struct@]@\n\
+     @[<hov>type@ t@ =@ %s@ structure@]@\n\
+     @[<hov>let@ t@ :@ t@ typ@ =@ structure@ %S@]@]@\n\
+     end@\n\
+     @\n"
+    module_name (mangle_name cname) cname;
+  defined := StrMap.add cname !stage !defined
+
 let pp_base_modules fmt globals =
   Format.fprintf fmt "@[<hov 2>%a@]@\n"
     (Format.pp_print_list
@@ -717,18 +755,12 @@ let pp_structs fmt globals =
     (fun fmt ->
       List.iter (fun global ->
           match global with
-          | GCompTag ({ cstruct = true; cname; cfields; _ }, _)
+          | GCompTag ({ cstruct = true; cname; _ }, _)
             when List.mem cname has_bit_fields -> (
               match List.assoc_opt cname stages with
-              | Some x when x = !stage -> pp_struct fmt cname cfields
+              | Some x when x = !stage -> pp_opaque_struct fmt cname
               | Some _ -> ()
-              | None ->
-                  if !stage > max_stage then
-                    if
-                      String.starts_with ~prefix:"Im" cname
-                      || String.starts_with ~prefix:"STB" cname
-                      || String.starts_with ~prefix:"Stb" cname
-                    then pp_struct fmt cname cfields)
+              | None -> if !stage > max_stage then pp_opaque_struct fmt cname)
           | _ -> ()))
     globals
     (fun fmt ->
@@ -762,14 +794,19 @@ let pp_structs fmt globals =
     globals
 
 let pp_types fmt globals =
+  (* A name is defined once, though C may declare it twice. *)
+  let emitted = Hashtbl.create 1024 in
   List.iter
     (fun global ->
       match global with
+      | GType ({ tname; _ }, _) when Hashtbl.mem emitted (mangle_name tname) -> ()
       | GType ({ tname; ttype; _ }, _) -> (
+          Hashtbl.replace emitted (mangle_name tname) ();
           if
             String.starts_with ~prefix:"Im" tname
             || String.starts_with ~prefix:"STB" tname
             || String.starts_with ~prefix:"Stb" tname
+            || String.starts_with ~prefix:"stbrp" tname
           then
             match ttype with
             | TComp ({ cstruct = true; cname; _ }, _) ->
@@ -883,6 +920,11 @@ let pp_types fmt globals =
                   ttype name name
                   (pp_ctypes_type ~in_bindings:false ~lift:false ~mod_name:false)
                   ttype tname
+            | TNamed ({ tname = dest_type; _ }, _)
+              when mangle_name tname = mangle_name dest_type ->
+                (* Two names for one type, mangled alike (ImStbTexteditState
+                   and STB_TexteditState): the first is enough. *)
+                ()
             | TNamed ({ tname = dest_type; ttype; _ }, _) ->
                 let name = mangle_name tname in
                 let dest_name = mangle_name dest_type in
@@ -933,10 +975,11 @@ let pp_fun_name curr_mod fmt vname =
       Format.fprintf fmt "%s" name
   | Some mod_ ->
       let regexp = Str.regexp mod_ in
-      let name =
-        Str.global_replace regexp "" vname
-        |> camlCase_to_snake_case ~remove_:true
-      in
+      let rest = Str.global_replace regexp "" vname in
+      (* [ImDrawList__AddLine], internal, is not [ImDrawList_AddLine]. *)
+      let internal = String.starts_with ~prefix:"_" rest in
+      let name = camlCase_to_snake_case ~remove_:true rest in
+      let name = if internal then "internal_" ^ name else name in
       let name =
         match name with
         | "begin" -> "begin_"
@@ -997,6 +1040,48 @@ let pp_fun_binding fmt var =
         vtype
   | _ -> ()
 
+(* The structs laid out by ctypes, in the file of their stage: modules of its
+   own, outside the functor. *)
+let top_level_modules file fmt =
+  List.iter
+    (fun cname ->
+      let in_file =
+        match List.assoc_opt cname stages with
+        | Some 1 -> 1
+        | _ -> 2
+      in
+      if in_file = file
+      then (
+        let m = mangle_struct_name cname in
+        Format.fprintf fmt "@[<hov>module@ %s@ =@ Cimgui_structs%d.%s@]@\n" m file m))
+    has_bit_fields
+
+(* The functions to bind, those of a module together (a module cannot be
+   opened twice), in the order modules first appear. *)
+let grouped_functions globals =
+  let funcs =
+    List.filter_map
+      (function
+        | GVarDecl (({ vtype = TFun _; vname; _ } as var), _)
+          when String.starts_with ~prefix:"ig" vname
+               || String.starts_with ~prefix:"Im" vname ->
+            Some var
+        | _ -> None)
+      globals
+  in
+  let order = Hashtbl.create 64 in
+  List.iteri
+    (fun i v ->
+      let m = get_module_name_opt v.vname in
+      if not (Hashtbl.mem order m) then Hashtbl.add order m i)
+    funcs;
+  List.stable_sort
+    (fun a b ->
+      compare
+        (Hashtbl.find order (get_module_name_opt a.vname))
+        (Hashtbl.find order (get_module_name_opt b.vname)))
+    funcs
+
 let pp_bindings fmt globals =
   Format.fprintf fmt
     "@[<hov>open@ Ctypes@]@\n\
@@ -1005,19 +1090,9 @@ let pp_bindings fmt globals =
      @[<hov>include@ Cimgui_enums.Enums@ (Cimgui_enums_generated)@]@\n\
      @[<hov>include@ Cimgui_base_structs.Base@ \
      (Cimgui_base_structs_generated)@]@\n\
-     @[<hov>module@ NextItemData@ =@ Cimgui_structs1.NextItemData@]@\n\
-     @[<hov>module@ TableColumnSortSpecs@ =@ \
-     Cimgui_structs1.TableColumnSortSpecs@]@\n\
+     %t\
      @[<hov>include@ Cimgui_structs1.Structs@ (Cimgui_structs1_generated)@]@\n\
-     @[<hov>module@ FontGlyph@ =@ Cimgui_structs2.FontGlyph@]@\n\
-     @[<hov>module@ DockNode@ =@ Cimgui_structs2.DockNode@]@\n\
-     @[<hov>module@ StackLevelInfo@ =@ Cimgui_structs2.StackLevelInfo@]@\n\
-     @[<hov>module@ Context@ =@ Cimgui_structs2.Context@]@\n\
-     @[<hov>module@ Window@ =@ Cimgui_structs2.Window@]@\n\
-     @[<hov>module@ TableColumn@ =@ Cimgui_structs2.TableColumn@]@\n\
-     @[<hov>module@ Table@ =@ Cimgui_structs2.Table@]@\n\
-     @[<hov>module@ TableColumnSettings@ =@ \
-     Cimgui_structs2.TableColumnSettings@]@\n\
+     %t\
      @[<hov>include@ Cimgui_structs2.Structs@ (Cimgui_structs2_generated)@]@]@\n\
      end@\n\
      @[<hov>open Types@]@\n\
@@ -1025,16 +1100,13 @@ let pp_bindings fmt globals =
      @[<hov 2>open@ F@]@\n\
      %a%a@]@\n\
      end"
+    (top_level_modules 1)
+    (top_level_modules 2)
     (fun fmt ->
-      List.iter (fun global ->
-          match global with
-          | GVarDecl (({ vtype = TFun _; vname; _ } as var), _)
-            when String.starts_with ~prefix:"ig" vname
-                 || String.starts_with ~prefix:"Im" vname ->
-              current_func := vname;
-              pp_fun_binding fmt var
-          | _ -> ()))
-    globals
+      List.iter (fun var ->
+          current_func := var.vname;
+          pp_fun_binding fmt var))
+    (grouped_functions globals)
     (fun fmt () ->
       if Option.is_some !current_module then Format.fprintf fmt "@]@\nend@\n"
       else ())

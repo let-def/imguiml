@@ -1,6 +1,13 @@
-(library
+(executable
  (name test_imguiml)
- (inline_tests)
- (preprocess
-  (pps ppx_expect))
- (libraries imguiml))
+ (libraries imguiml ctypes))
+
+(rule
+ (with-stdout-to
+  test_imguiml.output
+  (run ./test_imguiml.exe)))
+
+(rule
+ (alias runtest)
+ (action
+  (diff test_imguiml.expected test_imguiml.output)))
