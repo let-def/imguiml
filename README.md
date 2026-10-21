@@ -3,7 +3,14 @@
 This library contains bindings to [Dear ImGui](https://github.com/ocornut/imgui) using the
 [cimgui](https://github.com/cimgui/cimgui) bindings.
 
-Check the [documentation](https://emilienlemaire.github.io/imguiml) to find the bindings.
+This is an update of [emilienlemaire/imguiml](https://github.com/emilienlemaire/imguiml),
+updated to Dear ImGui 1.93.0 and loading fonts with FreeType.
+
+Imguiml is the work of Emilien Lemaire: its binding generator, which
+reads cimgui's header and writes the bindings, is the bulk of this
+package. It is now maintained by Frédéric Bour.
+
+Check the [documentation](https://let-def.github.io/imguiml) to find the bindings.
 
 ## Versions
 
@@ -48,7 +55,9 @@ On macOS, build with `--profile macosx`.
 
 The bindings in `src/` (`cimgui_*.ml`) are generated from `cimgui.h`
 by `src/generator`, and promoted into the source tree when it changes, on
-Linux.
+Linux. The generator needs goblint-cil, a development dependency
+(`opam install . --deps-only --with-dev-setup`); a release build
+(`dune build -p imguiml`) uses the committed bindings and does not need it.
 
 ## Updating ImGui
 

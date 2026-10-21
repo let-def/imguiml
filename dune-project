@@ -4,15 +4,15 @@
 (generate_opam_files false)
 (version v1.93.0)
 (source
- (github emilienlemaire/imguiml))
+ (github let-def/imguiml))
 
-(authors "Emilien Lemaire <emilien.lem@icloud.com>")
+(authors "Emilien Lemaire <emilien.lem@icloud.com>" "Frédéric Bour <frederic.bour@lakaban.net>")
 
-(maintainers "Emilien Lemaire <emilien.lem@icloud.com>")
+(maintainers "Frédéric Bour <frederic.bour@lakaban.net>")
 
 (license MIT)
 
-(documentation https://emilienlemaire.github.io/imguiml)
+(documentation https://let-def.github.io/imguiml)
 
 (package
  (name imguiml)
@@ -20,7 +20,7 @@
  (description "ImGUI bindings to OCaml")
  (depends ocaml
           dune
-          goblint-cil
+          (goblint-cil (and :with-dev-setup (>= 2.0.5)))
           ctypes
           ctypes-foreign
           (sherlodoc :with-doc))

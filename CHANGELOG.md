@@ -1,6 +1,7 @@
 # Changelog
 
-## v1.93.0 (unreleased)
+## v1.93.0
+Tue 27 Oct 18:05:40 JST 2026, @let-def
 
 ### Dear ImGui 1.93.0
 
@@ -51,7 +52,9 @@
 ### Build
 
 - Builds on all architectures, arm64 included.
-- Requires goblint-cil 2.0.5.
+- goblint-cil (2.0.5) is a development dependency only (`with-dev-setup`):
+  the bindings it generates are committed, and a release build (`-p`)
+  uses them without running the generator.
 - The generator skips variadic functions.
 - Include paths are relative to the dune files: the package builds when
   dune runs from anywhere, also as part of a larger dune workspace.
