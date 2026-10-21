@@ -57,17 +57,19 @@
 
 (rule
  (targets cimgui_enums_gen.exe)
- (deps cimgui_enums_gen.c)
+ (deps
+  (:c cimgui_enums_gen.c)
+  (glob_files ../cimgui/cimgui/*.h))
  (action
   (run
    cc
-   %{deps}
+   %{c}
    -o
    %{targets}
    -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE
    -I%{ocaml_where}
    -I%{ocaml_where}/../ctypes
-   -I%{env:PWD=.}/cimgui/cimgui)))
+   -I../cimgui/cimgui)))
 
 (rule
  (targets cimgui_enums_generated.ml)
@@ -121,17 +123,19 @@
 
 (rule
  (targets cimgui_base_structs_gen.exe)
- (deps cimgui_base_structs_gen.c)
+ (deps
+  (:c cimgui_base_structs_gen.c)
+  (glob_files ../cimgui/cimgui/*.h))
  (action
   (run
    cc
-   %{deps}
+   %{c}
    -o
    %{targets}
    -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE
    -I%{ocaml_where}
    -I%{ocaml_where}/../ctypes
-   -I%{env:PWD=.}/cimgui/cimgui)))
+   -I../cimgui/cimgui)))
 
 (rule
  (targets cimgui_base_structs_generated.ml)
@@ -188,17 +192,19 @@
 
 (rule
  (targets cimgui_structs1_gen.exe)
- (deps cimgui_structs1_gen.c)
+ (deps
+  (:c cimgui_structs1_gen.c)
+  (glob_files ../cimgui/cimgui/*.h))
  (action
   (run
    cc
-   %{deps}
+   %{c}
    -o
    %{targets}
    -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE
    -I%{ocaml_where}
    -I%{ocaml_where}/../ctypes
-   -I%{env:PWD=.}/cimgui/cimgui)))
+   -I../cimgui/cimgui)))
 
 (rule
  (targets cimgui_structs1_generated.ml)
@@ -257,17 +263,19 @@
 
 (rule
  (targets cimgui_structs2_gen.exe)
- (deps cimgui_structs2_gen.c)
+ (deps
+  (:c cimgui_structs2_gen.c)
+  (glob_files ../cimgui/cimgui/*.h))
  (action
   (run
    cc
-   %{deps}
+   %{c}
    -o
    %{targets}
    -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE
    -I%{ocaml_where}
    -I%{ocaml_where}/../ctypes
-   -I%{env:PWD=.}/cimgui/cimgui)))
+   -I../cimgui/cimgui)))
 
 (rule
  (targets cimgui_structs2_generated.ml)
@@ -333,9 +341,9 @@
  (foreign_stubs
   (language c)
   (names cimgui_bindings_generated)
+  (include_dirs ../cimgui/cimgui)
   (flags
    -fPIC
-   -I%{env:PWD=.}/cimgui/cimgui
    -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE
    -Wno-incompatible-pointer-types
    -Wno-discarded-qualifiers))

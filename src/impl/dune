@@ -84,10 +84,9 @@
  (foreign_stubs
   (language c)
   (names imguiml_impl_stubs)
+  (include_dirs ../../cimgui/cimgui ../../cimgui/cimgui/generator/output)
   (flags
    :standard
-   -I%{env:PWD=.}/cimgui/cimgui
-   -I%{env:PWD=.}/cimgui/cimgui/generator/output
    -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE))
  (libraries ctypes.stubs imguiml_impl_foreign))
 
