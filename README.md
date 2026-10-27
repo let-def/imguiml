@@ -62,7 +62,9 @@ directory, both without their git history. To move to another version:
    `./generator.sh` (it needs LuaJIT and gcc). Leave out what it leaves
    behind there: `itemsarr.lua`, `preprocesed.h`.
 3. Keep this repository's changes to `cimgui/cimgui/CMakeLists.txt`,
-   which finds FreeType with CMake's `FindFreetype` module, and to
+   which finds FreeType with CMake's `FindFreetype` module and, with
+   `IMGUI_STATIC=both`, builds the static and the shared library from
+   the same objects, and to
    `cimgui/cimgui/imgui/imconfig.h`, which defines `IMGUI_USE_WCHAR32`.
 4. Copy ImGui's GLFW and OpenGL3 backends from `imgui/backends` to
    `src/impl/backend`.

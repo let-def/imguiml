@@ -13,19 +13,14 @@
     (chdir
      cimgui
      (progn
-      (run mkdir -p build_static build_dynamic)))
+      (run mkdir -p build)))
     (chdir
-     cimgui/build_static
+     cimgui/build
      (progn
-      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes -DIMGUI_STATIC=yes ..)
+      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes -DIMGUI_STATIC=both ..)
       (run make)))
-    (chdir
-     cimgui/build_dynamic
-     (progn
-      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes ..)
-      (run make)))
-    (copy cimgui/build_dynamic/cimgui.so dllcimgui.so)
-    (copy cimgui/build_static/cimgui.a libcimgui.a)))))
+    (copy cimgui/build/cimgui.so dllcimgui.so)
+    (copy cimgui/build/cimgui.a libcimgui.a)))))
 
 (rule
  (deps
@@ -40,19 +35,14 @@
     (chdir
      cimgui
      (progn
-      (run mkdir -p build_static build_dynamic)))
+      (run mkdir -p build)))
     (chdir
-     cimgui/build_static
+     cimgui/build
      (progn
-      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes -DIMGUI_STATIC=yes ..)
+      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes -DIMGUI_STATIC=both ..)
       (run make)))
-    (chdir
-     cimgui/build_dynamic
-     (progn
-      (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes ..)
-      (run make)))
-    (copy cimgui/build_dynamic/cimgui.dylib dllcimgui.so)
-    (copy cimgui/build_static/cimgui.a libcimgui.a)))))
+    (copy cimgui/build/cimgui.dylib dllcimgui.so)
+    (copy cimgui/build/cimgui.a libcimgui.a)))))
 
 (library
  (name cimgui)

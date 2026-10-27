@@ -14,32 +14,25 @@ add_definitions("-DIMGUI_DISABLE_OBSOLETE_FUNCTIONS=1")
 
 add_definitions("-DIMGUI_IMPL_API=extern \"C\" ")
 
-if(IMGUI_STATIC)
-    add_library(cimgui STATIC IMPORTED)
-    if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-	set_target_properties(cimgui PROPERTIES
-	    IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../../../cimgui/libcimgui.a
-	    INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/../../../cimgui/cimgui)
-    else()
-	set_target_properties(cimgui PROPERTIES
-	    IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../../../cimgui/libcimgui.a
-	    INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/../../../cimgui/cimgui)
-    endif()
-    add_library(${PROJECT_NAME} STATIC imgui_impl_opengl3.cpp imgui_impl_glfw.cpp)
-else()
-    add_library(cimgui SHARED IMPORTED)
-    set_target_properties(cimgui PROPERTIES
-	IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../../../cimgui/dllcimgui.so
-	INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/../../../cimgui/cimgui/)
-    add_library(${PROJECT_NAME} SHARED imgui_impl_opengl3.cpp imgui_impl_glfw.cpp)
-endif()
+# Compile the backends once, position independent, for both libraries
+add_library(cimgui SHARED IMPORTED)
+set_target_properties(cimgui PROPERTIES
+    IMPORTED_LOCATION ${CMAKE_SOURCE_DIR}/../../../cimgui/dllcimgui.so
+    INTERFACE_INCLUDE_DIRECTORIES ${CMAKE_SOURCE_DIR}/../../../cimgui/cimgui/)
+add_library(${PROJECT_NAME}_objects OBJECT imgui_impl_opengl3.cpp imgui_impl_glfw.cpp)
+set_target_properties(${PROJECT_NAME}_objects PROPERTIES POSITION_INDEPENDENT_CODE ON)
+add_library(${PROJECT_NAME} SHARED)
+add_library(${PROJECT_NAME}_static STATIC)
+set_target_properties(${PROJECT_NAME}_static PROPERTIES OUTPUT_NAME ${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_objects)
+target_link_libraries(${PROJECT_NAME}_static ${PROJECT_NAME}_objects)
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC 
+target_compile_definitions(${PROJECT_NAME}_objects PUBLIC
     -DCIMGUI_USE_OPENGL3
     -DCIMGUI_USE_GLFW)
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
     find_package(OpenGL REQUIRED)
-    target_link_libraries(${PROJECT_NAME} cimgui glfw GLEW::GLEW OpenGL::GL)
+    target_link_libraries(${PROJECT_NAME}_objects cimgui glfw GLEW::GLEW OpenGL::GL)
 else()
-    target_link_libraries(${PROJECT_NAME} cimgui glfw GLEW::GLEW)
+    target_link_libraries(${PROJECT_NAME}_objects cimgui glfw GLEW::GLEW)
 endif()

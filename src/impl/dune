@@ -22,19 +22,14 @@
    (progn
     (chdir
      backend
-     (run mkdir -p build_static build_dynamic))
+     (run mkdir -p build))
     (chdir
-     backend/build_static
-     (progn
-      (run cmake .. -DIMGUI_STATIC=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo)
-      (run make)))
-    (chdir
-     backend/build_dynamic
+     backend/build
      (progn
       (run cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo)
       (run make)))
-    (copy backend/build_dynamic/libcimgui_impl.so dllimguiml_impl.so)
-    (copy backend/build_static/libcimgui_impl.a libimguiml_impl.a)))))
+    (copy backend/build/libcimgui_impl.so dllimguiml_impl.so)
+    (copy backend/build/libcimgui_impl.a libimguiml_impl.a)))))
 
 (rule
  (deps
@@ -47,19 +42,14 @@
    (progn
     (chdir
      backend
-     (run mkdir -p build_static build_dynamic))
+     (run mkdir -p build))
     (chdir
-     backend/build_static
-     (progn
-      (run cmake .. -DIMGUI_STATIC=ON -DCMAKE_BUILD_TYPE=RelWithDebInfo)
-      (run make)))
-    (chdir
-     backend/build_dynamic
+     backend/build
      (progn
       (run cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo)
       (run make)))
-    (copy backend/build_dynamic/libcimgui_impl.dylib dllimguiml_impl.so)
-    (copy backend/build_static/libcimgui_impl.a libimguiml_impl.a)))))
+    (copy backend/build/libcimgui_impl.dylib dllimguiml_impl.so)
+    (copy backend/build/libcimgui_impl.a libimguiml_impl.a)))))
 
 (library
  (name imguiml_impl_foreign)

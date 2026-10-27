@@ -58,6 +58,8 @@
 - The bindings promoted into `src` no longer carry the date they were
   generated: a build leaves them unchanged unless cimgui changes.
 - The test compares its output with a file, without ppx_expect.
+- cimgui and the backends are compiled once, position independent, for
+  both the static and the shared library, instead of once for each.
 
 ## v1.90.6
 
