@@ -3,7 +3,7 @@
 (rule
  (deps
   (source_tree cimgui))
- (targets libcimgui.a dllcimgui.so)
+ (targets libcimgui.a dllcimgui.so freetype_linkflags.sexp)
  (enabled_if
   (<> %{ocaml-config:system} macosx))
  (alias cimgui)
@@ -20,12 +20,13 @@
       (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes -DIMGUI_STATIC=both ..)
       (run make)))
     (copy cimgui/build/cimgui.so dllcimgui.so)
-    (copy cimgui/build/cimgui.a libcimgui.a)))))
+    (copy cimgui/build/cimgui.a libcimgui.a)
+    (copy cimgui/build/freetype_linkflags.sexp freetype_linkflags.sexp)))))
 
 (rule
  (deps
   (source_tree cimgui))
- (targets libcimgui.a dllcimgui.so)
+ (targets libcimgui.a dllcimgui.so freetype_linkflags.sexp)
  (enabled_if
   (= %{ocaml-config:system} macosx))
  (alias cimgui)
@@ -42,12 +43,13 @@
       (run cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DIMGUI_FREETYPE=yes -DIMGUI_STATIC=both ..)
       (run make)))
     (copy cimgui/build/cimgui.dylib dllcimgui.so)
-    (copy cimgui/build/cimgui.a libcimgui.a)))))
+    (copy cimgui/build/cimgui.a libcimgui.a)
+    (copy cimgui/build/freetype_linkflags.sexp freetype_linkflags.sexp)))))
 
 (library
  (name cimgui)
  (public_name imguiml.cimgui)
- (c_library_flags -lfreetype -lstdc++)
+ (c_library_flags (:include freetype_linkflags.sexp) -lstdc++)
  (public_headers
   cimgui/cimgui.h
   (glob_files cimgui/imgui/*.h))

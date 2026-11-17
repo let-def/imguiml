@@ -30,6 +30,9 @@ if(IMGUI_FREETYPE)
 	find_package(Freetype REQUIRED)
 	list(APPEND IMGUI_LIBRARIES Freetype::Freetype)
 	list(APPEND IMGUI_SOURCES imgui/misc/freetype/imgui_freetype.cpp)
+  file(GENERATE
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/freetype_linkflags.sexp
+    CONTENT "(\"$<TARGET_LINKER_FILE:Freetype::Freetype>\")\n")
 endif(IMGUI_FREETYPE)
 
 #add library and link
