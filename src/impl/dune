@@ -16,7 +16,7 @@
   (source_tree backend)
   (alias_rec ../../cimgui/cimgui))
   (enabled_if (<> %{ocaml-config:system} macosx))
- (targets libimguiml_impl.a dllimguiml_impl.so)
+ (targets libimguiml_impl.a dllimguiml_impl.so impl_includes.sexp)
  (action
   (no-infer
    (progn
@@ -29,14 +29,15 @@
       (run cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo)
       (run make)))
     (copy backend/build/libcimgui_impl.so dllimguiml_impl.so)
-    (copy backend/build/libcimgui_impl.a libimguiml_impl.a)))))
+    (copy backend/build/libcimgui_impl.a libimguiml_impl.a)
+    (copy backend/build/impl_includes.sexp impl_includes.sexp)))))
 
 (rule
  (deps
   (source_tree backend)
   (alias_rec ../../cimgui/cimgui))
   (enabled_if (= %{ocaml-config:system} macosx))
- (targets libimguiml_impl.a dllimguiml_impl.so)
+ (targets libimguiml_impl.a dllimguiml_impl.so impl_includes.sexp)
  (action
   (no-infer
    (progn
@@ -49,7 +50,8 @@
       (run cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo)
       (run make)))
     (copy backend/build/libcimgui_impl.dylib dllimguiml_impl.so)
-    (copy backend/build/libcimgui_impl.a libimguiml_impl.a)))))
+    (copy backend/build/libcimgui_impl.a libimguiml_impl.a)
+    (copy backend/build/impl_includes.sexp impl_includes.sexp)))))
 
 (library
  (name imguiml_impl_foreign)
@@ -63,10 +65,6 @@
  (action
   (run %{deps})))
 
-(env
-  (macosx
-    (c_flags -I/opt/homebrew/include)))
-
 (library
  (name imguiml_impl_generated)
  (public_name imguiml.imguiml_impl_generated)
@@ -77,7 +75,8 @@
   (include_dirs ../../cimgui/cimgui ../../cimgui/cimgui/generator/output)
   (flags
    :standard
-   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE -DIMGUI_USE_WCHAR32))
+   -DCIMGUI_DEFINE_ENUMS_AND_STRUCTS=1 -DIMGUI_ENABLE_FREETYPE -DIMGUI_USE_WCHAR32
+   (:include impl_includes.sexp)))
  (libraries ctypes.stubs imguiml_impl_foreign))
 
 (library

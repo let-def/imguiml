@@ -36,3 +36,8 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
 else()
     target_link_libraries(${PROJECT_NAME}_objects cimgui glfw GLEW::GLEW)
 endif()
+
+file(GENERATE
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/impl_includes.sexp
+  CONTENT "(\"-I$<JOIN:$<TARGET_PROPERTY:GLEW::GLEW,INTERFACE_INCLUDE_DIRECTORIES>, -I>\")\n")
+
